@@ -35,7 +35,8 @@ app.get('/remove/:id', (req, res) => {
 });
 
 app.get('/update/:id', (req, res) => {
-    res.render('update');
+    Singer.findById(req.params.id)
+    .then(singer => res.render('update', { singer }));
 });
 
 const saveFile = upload.single('image');
