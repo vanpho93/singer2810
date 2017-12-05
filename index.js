@@ -27,7 +27,7 @@ app.get('/remove/:id', (req, res) => {
    Singer.findByIdAndRemove(id)
    .then((singer) => {
         fs.unlinkSync('./public/' + singer.image);
-       res.redirect('/singer');
+        res.redirect('/singer');
     })
     .catch(err => {
         res.send(err.message);
@@ -37,6 +37,22 @@ app.get('/remove/:id', (req, res) => {
 app.get('/update/:id', (req, res) => {
     Singer.findById(req.params.id)
     .then(singer => res.render('update', { singer }));
+});
+
+app.post('/singer/:id', (req, res) => {
+    saveFile(req, res, err => {
+        if (err) {
+            return res.send('Bi loi roi: ' + err.message);
+        }
+        const { id } = req.params;
+        const { name } = req.body;
+        const image = req.file.filename;
+        Singer.findByIdAndUpdate(id, { name, image })
+        .then(oldSinger => {
+            fs.unlinkSync('./public/' + oldSinger.image);
+            res.redirect('/singer');
+        });
+    });
 });
 
 const saveFile = upload.single('image');

@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     </head>
     <body>
-        <form action="/singer" method="POST" enctype="multipart/form-data">
+        <form action="/singer/<%= singer._id %>" method="POST" enctype="multipart/form-data">
             <input type="text" placeholder="Name" name="name" value="<%= singer.name %>">
             <br><br>
             <input type="file" name="image">
