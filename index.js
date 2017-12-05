@@ -12,7 +12,6 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => res.redirect('/singer'));
 
-// CHUA XU LY
 app.get('/singer', (req, res) => {
     Singer.find({})
     .then(singers => res.render('singer', { singers }));
@@ -24,7 +23,19 @@ app.get('/add', (req, res) => {
 
 // CHUA XU LY
 app.get('/remove/:id', (req, res) => {
-   
+   const { id } = req.params;
+   Singer.findByIdAndRemove(id)
+   .then((singer) => {
+        fs.unlinkSync('./public/' + singer.image);
+       res.redirect('/singer');
+    })
+    .catch(err => {
+        res.send(err.message);
+    });
+});
+
+app.get('/update/:id', (req, res) => {
+    res.render('update');
 });
 
 const saveFile = upload.single('image');
@@ -32,7 +43,14 @@ const saveFile = upload.single('image');
 // CHUA XU LY
 app.post('/singer', (req, res) => {
     saveFile(req, res, err => {
-        res.send('Saved');
+        if (err) {
+            return res.send('Bi loi roi: ' + err.message);
+        }
+        const { name } = req.body;
+        const image = req.file.filename;
+        const singer = new Singer({ name, image });
+        singer.save()
+        .then(() => res.redirect('/singer'));
     });
 });
 
